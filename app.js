@@ -2,7 +2,11 @@
 const express = require("express");
 require("dotenv").config(); // Carrega as variáveis de ambiente
 
+const cors = require('cors');
+
 const app = express();
+
+app.use(cors());
 const port = process.env.PORT || 8000;
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
