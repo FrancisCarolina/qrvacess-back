@@ -83,3 +83,25 @@ exports.registerCondutor = async (req, res) => {
     connection.release();
   }
 };
+
+exports.ativarCondutor = async (req, res) => {
+  const { condutor_id } = req.body;
+
+  if (!condutor_id) {
+    return res.status(400).send("O campo condutor_id é obrigatório.");
+  }
+
+  try {
+    const updateQuery = "UPDATE condutor SET ativo = 1 WHERE id = ?";
+    const [result] = await db.query(updateQuery, [condutor_id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).send("Condutor não encontrado.");
+    }
+
+    res.status(200).send("Condutor ativado com sucesso!");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao ativar condutor.");
+  }
+};
