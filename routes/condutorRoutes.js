@@ -1,7 +1,9 @@
+// routes/condutorRoutes.js
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/userController");
+const condutorController = require("../controllers/condutorController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
-router.put("/condutor/ativar", userController.ativarCondutor);
+router.put("/condutor/ativar", authMiddleware.verifyToken, condutorController.ativarCondutor);
 
 module.exports = router;
