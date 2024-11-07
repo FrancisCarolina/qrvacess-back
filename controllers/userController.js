@@ -89,3 +89,31 @@ exports.registerCondutor = async (req, res) => {
     connection.release();
   }
 };
+
+exports.getUsuarioById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT 
+        u.id, u.login, u.role_id, 
+        JSON_OBJECT('id', l.id, 'nome', l.nome) AS local
+      FROM usuarios u
+      LEFT JOIN local l ON u.local_id = l.id
+      WHERE u.id = ?
+    `;
+
+    const [results] = await db.query(query, [id]);
+
+    if (results.length === 0) {
+      return res.status(404).send("Usuário não encontrado.");
+    }
+
+    const user = results[0];
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Erro ao buscar usuário:", err);
+    res.status(500).send("Erro no servidor.");
+  }
+};
+
