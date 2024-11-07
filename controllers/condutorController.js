@@ -1,4 +1,6 @@
-const db = require("../config/db");
+const Condutor = require("../models/Condutor");
+const Usuario = require("../models/Usuario");
+const Local = require("../models/Local");
 
 exports.ativarCondutor = async (req, res) => {
   try {
@@ -8,10 +10,12 @@ exports.ativarCondutor = async (req, res) => {
       return res.status(400).send("ID do condutor é obrigatório.");
     }
 
-    const updateQuery = "UPDATE condutor SET ativo = 1 WHERE id = ?";
-    const [result] = await db.query(updateQuery, [condutor_id]);
+    const [affectedRows] = await Condutor.update(
+      { ativo: true },
+      { where: { id: condutor_id } }
+    );
 
-    if (result.affectedRows === 0) {
+    if (affectedRows === 0) {
       return res.status(404).send("Condutor não encontrado.");
     }
 
@@ -26,27 +30,26 @@ exports.getCondutoresByLocalId = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const query = `
-      SELECT 
-        c.id AS id, 
-        c.nome AS nome, 
-        c.cpf AS cpf, 
-        c.ativo AS ativo,
-        u.id AS usuario_id, 
-        u.login AS login
-      FROM condutor c
-      INNER JOIN usuarios u ON c.usuario_id = u.id
-      INNER JOIN local l ON u.local_id = l.id
-      WHERE l.id = ?
-    `;
+    const condutores = await Condutor.findAll({
+      include: [
+        {
+          model: Usuario,
+          attributes: ["id", "login"],
+          include: {
+            model: Local,
+            attributes: ["id", "nome"],
+            where: { id },
+          },
+        },
+      ],
+      attributes: ["id", "nome", "cpf", "ativo"],
+    });
 
-    const [results] = await db.query(query, [id]);
-
-    if (results.length === 0) {
+    if (condutores.length === 0) {
       return res.status(404).send("Nenhum condutor encontrado para o local especificado.");
     }
 
-    res.status(200).json(results);
+    res.status(200).json(condutores);
   } catch (err) {
     console.error("Erro ao buscar condutores:", err);
     res.status(500).send("Erro no servidor.");

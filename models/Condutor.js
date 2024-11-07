@@ -1,6 +1,7 @@
 // models/Condutor.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
+const Usuario = require("./Usuario");
 
 const Condutor = sequelize.define("Condutor", {
   id: {
@@ -19,15 +20,22 @@ const Condutor = sequelize.define("Condutor", {
   },
   ativo: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
+    defaultValue: false,
   },
   usuario_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: Usuario,
+      key: "id",
+    },
   },
 }, {
   tableName: "condutor",
   timestamps: true,
 });
+
+Condutor.belongsTo(Usuario, { foreignKey: "usuario_id" });
+Usuario.hasOne(Condutor, { foreignKey: "usuario_id" });
 
 module.exports = Condutor;
