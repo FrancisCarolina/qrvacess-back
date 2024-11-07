@@ -27,3 +27,39 @@ exports.createVeiculo = async (req, res) => {
     res.status(500).send("Erro ao criar veículo.");
   }
 };
+exports.getVeiculoByPlacaOuNome = async (req, res) => {
+    const { nome, placa } = req.query;
+  
+    try {
+      let query = "SELECT v.id, v.placa, v.modelo, v.condutor_id FROM veiculos v";
+      let queryParams = [];
+  
+      if (nome) {
+        query += " JOIN condutor c ON c.id = v.condutor_id WHERE c.nome = ?";
+        queryParams.push(nome);
+      } else if (placa) {
+        query += " WHERE v.placa = ?";
+        queryParams.push(placa);
+      } else {
+        return res.status(400).send("Por favor, forneça 'nome' ou 'placa' como parâmetro.");
+      }
+  
+      const [results] = await db.query(query, queryParams);
+  
+      if (results.length === 0) {
+        return res.status(404).send("Veículo não encontrado.");
+      }
+  
+      const veiculo = results[0];
+      return res.status(200).json({
+        id: veiculo.id,
+        placa: veiculo.placa,
+        modelo: veiculo.modelo,
+        condutor_id: veiculo.condutor_id
+      });
+  
+    } catch (err) {
+      console.error("Erro ao buscar veículo:", err);
+      return res.status(500).send("Erro no servidor.");
+    }
+  };
