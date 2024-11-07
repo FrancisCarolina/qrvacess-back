@@ -32,7 +32,9 @@ exports.register = async (req, res) => {
     res.status(201).send("Usuário registrado com sucesso!");
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(409).send("Este Login já está em uso.");
+      if (err.message.includes('login')) {
+        return res.status(409).send("Este Login já está em uso.");
+      }
     }
     console.error(err);
     res.status(500).send("Erro ao registrar usuário.");
@@ -75,7 +77,11 @@ exports.registerCondutor = async (req, res) => {
   } catch (err) {
     await connection.rollback();
     if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(409).send("Este Login já está em uso.");
+      if (err.message.includes('login')) {
+        return res.status(409).send("Este Login já está em uso.");
+      } else if (err.message.includes('cpf')) {
+        return res.status(409).send("Este CPF já está em uso.");
+      }
     }
     console.error(err);
     res.status(500).send("Erro ao registrar condutor.");
