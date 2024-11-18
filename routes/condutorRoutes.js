@@ -6,6 +6,5 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 router.put("/condutor/ativar", authMiddleware.verifyToken, condutorController.ativarCondutor);
 router.get("/condutor/local/:id", authMiddleware.verifyToken, condutorController.getCondutoresByLocalId);
-router.post('/condutor/:id/codigo',authMiddleware.verifyToken, condutorController.gerarCodigo);
 
 module.exports = router;

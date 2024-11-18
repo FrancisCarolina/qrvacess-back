@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const condutorRoutes = require("./routes/condutorRoutes");
 const veiculoRoutes = require("./routes/veiculoRoutes");
+const codigoRoutes = require("./routes/codigoRoutes");
 
 // Middleware para interpretar JSON
 app.use(express.json());
@@ -21,6 +22,7 @@ app.use("/", userRoutes);
 app.use("/", authRoutes);
 app.use("/", condutorRoutes);
 app.use("/", veiculoRoutes);
+app.use("/", codigoRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
