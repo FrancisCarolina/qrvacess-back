@@ -74,10 +74,10 @@ exports.validarCodigo = async (req, res) => {
     const codigoExistente = await Codigo.findOne({ where: { codigo } });
 
     if (!codigoExistente) {
-      return res.status(404).json({ message: "Código inválido ou não encontrado." });
+      return res.status(404).json({ valid: 0 });
     }
 
-    res.status(200).json({ message: "Código válido." });
+    res.status(200).json({ valid: 1 });
   } catch (error) {
     console.error("Erro ao validar código:", error);
     res.status(500).send("Erro no servidor.");
