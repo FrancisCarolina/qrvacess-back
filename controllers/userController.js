@@ -55,6 +55,13 @@ exports.registerCondutor = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(senha, 10);
     const roleId = 2;
 
+    // Verificar se o login já existe no banco de dados antes de tentar criar
+    const existingLogin = await Usuario.findOne({ where: { login } });
+    if (existingLogin) {
+      return res.status(409).send("Este Login já está em uso.");
+    }
+
+    // Se o login não existir, prosseguir com a criação
     const usuario = await Usuario.create({
       login,
       senha: hashedPassword,
@@ -73,17 +80,18 @@ exports.registerCondutor = async (req, res) => {
     res.status(201).send("Condutor registrado com sucesso!");
   } catch (err) {
     await transaction.rollback();
+    console.error(err);
+
     if (err.name === "SequelizeUniqueConstraintError") {
-      if (err.errors[0].path === "login") {
-        return res.status(409).send("Este Login já está em uso.");
-      } else if (err.errors[0].path === "cpf") {
+      if (err.errors[0].path === "cpf") {
         return res.status(409).send("Este CPF já está em uso.");
       }
     }
-    console.error(err);
+
     res.status(500).send("Erro ao registrar condutor.");
   }
 };
+
 
 
 exports.getUsuarioById = async (req, res) => {
