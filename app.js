@@ -13,6 +13,7 @@ const authRoutes = require("./routes/authRoutes");
 const condutorRoutes = require("./routes/condutorRoutes");
 const veiculoRoutes = require("./routes/veiculoRoutes");
 const codigoRoutes = require("./routes/codigoRoutes");
+const localRoutes = require("./routes/localRoutes");
 
 // Middleware para interpretar JSON
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use("/", authRoutes);
 app.use("/", condutorRoutes);
 app.use("/", veiculoRoutes);
 app.use("/", codigoRoutes);
+app.use("/", localRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
