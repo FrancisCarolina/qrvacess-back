@@ -55,3 +55,21 @@ exports.getCondutoresByLocalId = async (req, res) => {
     res.status(500).send("Erro no servidor.");
   }
 };
+
+exports.getCondutorByUserId = async (req, res) => {
+  const { id } = req.params; // O ID aqui é o usuario_id
+
+  try {
+      // Busca o condutor pelo usuario_id
+      const condutor = await Condutor.findOne({ where: { usuario_id: id } });
+
+      if (!condutor) {
+          return res.status(404).json({ message: "Condutor não encontrado." });
+      }
+
+      res.status(200).json(condutor);
+  } catch (error) {
+      console.error("Erro ao buscar condutor:", error);
+      res.status(500).json({ message: "Erro no servidor." });
+  }
+};
