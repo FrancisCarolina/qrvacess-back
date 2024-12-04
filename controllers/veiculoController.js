@@ -66,3 +66,23 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
     return res.status(500).send("Erro no servidor.");
   }
 };
+exports.getVeiculosByCondutorId = async (req, res) => {
+  const { id } = req.params;  // Pegando o ID do condutor da URL
+
+  try {
+    // Buscando todos os veículos que pertencem ao condutor com o ID fornecido
+    const veiculos = await Veiculo.findAll({
+      where: { condutor_id: id },  // Condição para buscar veículos com o condutor_id correspondente
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"],  // Atributos que queremos retornar
+    });
+
+    if (veiculos.length === 0) {
+      return res.status(404).send("Nenhum veículo encontrado para este condutor.");
+    }
+
+    res.status(200).json(veiculos);
+  } catch (err) {
+    console.error("Erro ao buscar veículos do condutor:", err);
+    return res.status(500).send("Erro ao buscar veículos do condutor.");
+  }
+};
