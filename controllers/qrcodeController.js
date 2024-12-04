@@ -29,3 +29,20 @@ exports.validarQrcode =  async (req, res) => {
   }
 };
 
+exports.buscarQrcode = async (req, res) => {
+    try {
+      const { id } = req.params; // Pega o id da URL
+  
+      // Buscar o QR Code com o id informado
+      const qrcode = await qrcodeValido.findByPk(id);
+  
+      if (!qrcode) {
+        return res.status(404).json({ message: 'QR Code não encontrado.' });
+      }
+  
+      return res.status(200).json({ qrcode });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
+  };
