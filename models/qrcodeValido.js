@@ -9,9 +9,9 @@ const qrcodeValido = sequelize.define("qrcodeValido", {
     autoIncrement: true,
   },
   valido: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false, // Definido como 0 (false) por padrão
+    defaultValue: 0, // Definido como 0 (false) por padrão
   },
 }, {
   tableName: "qrcodevalido", // O nome da tabela no banco de dados

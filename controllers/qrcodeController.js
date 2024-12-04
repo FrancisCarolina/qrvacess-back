@@ -7,19 +7,14 @@ exports.validarQrcode =  async (req, res) => {
   try {
     const { valido } = req.body;
 
-    // Validar entrada
-    if (typeof valido !== 'boolean') {
-      return res.status(400).json({ error: 'O campo "valido" deve ser um booleano (true ou false).' });
-    }
 
     // Buscar o registro com id = 1
     let qrcode = await qrcodeValido.findByPk(1);
 
     if (!qrcode) {
-      // Criar o registro com id = 1 e valido = 0, caso não exista
       qrcode = await qrcodeValido.create({
         id: 1,
-        valido: false, // Cria com válido como falso inicialmente
+        valido: 0, 
       });
     }
 
