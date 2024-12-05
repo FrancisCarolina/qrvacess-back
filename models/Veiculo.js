@@ -38,11 +38,6 @@ const Veiculo = sequelize.define("Veiculo", {
       key: "id",
     },
   },
-  ativo: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,  
-    allowNull: false, 
-  },
 }, {
   tableName: "veiculos",
   timestamps: true,

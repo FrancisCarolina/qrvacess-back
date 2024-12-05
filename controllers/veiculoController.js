@@ -1,6 +1,7 @@
 // controllers/veiculoController.js
 const Veiculo = require("../models/Veiculo");
 const Condutor = require("../models/Condutor");
+const Usuario = require("../models/Usuario");
 
 exports.createVeiculo = async (req, res) => {
   const { placa, modelo, marca, cor, ano, condutor_id } = req.body;
@@ -73,7 +74,7 @@ exports.getVeiculosByCondutorId = async (req, res) => {
     // Buscando todos os veículos que pertencem ao condutor com o ID fornecido
     const veiculos = await Veiculo.findAll({
       where: { condutor_id: id },  // Condição para buscar veículos com o condutor_id correspondente
-      attributes: ["id", "placa", "modelo", "marca", "cor", "ano", "ativo"],  // Atributos que queremos retornar
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"],  // Atributos que queremos retornar
     });
 
     if (veiculos.length === 0) {
@@ -84,5 +85,36 @@ exports.getVeiculosByCondutorId = async (req, res) => {
   } catch (err) {
     console.error("Erro ao buscar veículos do condutor:", err);
     return res.status(500).send("Erro ao buscar veículos do condutor.");
+  }
+};
+exports.getVeiculosByLocal = async (req, res) => {
+  const { local_id } = req.params; // Pegando o local_id da URL
+
+  try {
+    const veiculos = await Veiculo.findAll({
+      include: [
+        {
+          model: Condutor,
+          attributes: ["nome"], // Inclui o nome do condutor
+          include: [
+            {
+              model: Usuario, // Assumindo que o modelo de usuário está corretamente associado
+              where: { local_id }, // Filtra pelo local_id do usuário
+              attributes: ["login"], // Inclui o login do usuário
+            },
+          ],
+        },
+      ],
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos do veículo que queremos retornar
+    });
+
+    if (veiculos.length === 0) {
+      return res.status(404).send("Nenhum veículo encontrado para este local.");
+    }
+
+    res.status(200).json(veiculos);
+  } catch (err) {
+    console.error("Erro ao buscar veículos por local:", err);
+    return res.status(500).send("Erro ao buscar veículos por local.");
   }
 };
