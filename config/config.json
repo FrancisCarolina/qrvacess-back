@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "root",
-    "database": "qrvaccess",
-    "host": "127.0.0.1",
+    "username": "kayure",
+    "password": "kayure",
+    "database": "kayure",
+    "host": "wagnerweinert.com.br",
     "dialect": "mysql"
   }
 }
