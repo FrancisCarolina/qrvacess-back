@@ -153,7 +153,13 @@ exports.updateUsuario = async (req, res) => {
     // Atualizar o usuário
     await user.update(updates);
 
-    res.status(200).send("Usuário atualizado com sucesso!");
+    // Buscar os dados atualizados do usuário com relacionamentos
+    const updatedUser = await Usuario.findByPk(id, {
+      attributes: ["id", "login", "role_id", "senha"], // Selecionar atributos desejados
+      include: { model: Local, attributes: ["id", "nome"] },
+    });
+
+    res.status(200).json(updatedUser);
   } catch (err) {
     console.error("Erro ao atualizar usuário:", err);
 
