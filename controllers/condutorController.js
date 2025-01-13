@@ -1,6 +1,7 @@
 const Condutor = require("../models/Condutor");
 const Usuario = require("../models/Usuario");
 const Local = require("../models/Local");
+const Veiculo = require("../models/Veiculo");
 
 exports.ativarCondutor = async (req, res) => {
   try {
@@ -101,6 +102,37 @@ exports.updateCondutor = async (req, res) => {
     res.status(200).send("Condutor atualizado com sucesso.");
   } catch (err) {
     console.error("Erro ao atualizar condutor:", err);
+    res.status(500).send("Erro no servidor.");
+  }
+};
+exports.mudarVeiculoEmUso = async (req, res) => {
+  const { id } = req.params; // ID do condutor
+  const { veiculo_em_uso } = req.body; // ID do veículo que está em uso
+
+  if (!veiculo_em_uso) {
+    return res.status(400).send("ID do veículo em uso é obrigatório.");
+  }
+
+  try {
+    // Atualiza todos os veículos do condutor para em_uso = false
+    await Condutor.update(
+      { em_uso: false },
+      { where: { id }, include: { model: Veiculo } }
+    );
+
+    // Atualiza o veículo especificado para em_uso = true
+    const [affectedRows] = await Veiculo.update(
+      { em_uso: true },
+      { where: { id: veiculo_em_uso, condutor_id: id } }
+    );
+
+    if (affectedRows === 0) {
+      return res.status(404).send("Veículo não encontrado ou não pertencente ao condutor.");
+    }
+
+    res.status(200).send("Veículo atualizado com sucesso.");
+  } catch (error) {
+    console.error("Erro ao mudar o veículo em uso:", error);
     res.status(500).send("Erro no servidor.");
   }
 };

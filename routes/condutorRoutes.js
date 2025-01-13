@@ -8,6 +8,7 @@ router.put("/condutor/ativar", authMiddleware.verifyToken, condutorController.at
 router.get("/condutor/local/:id", authMiddleware.verifyToken, condutorController.getCondutoresByLocalId);
 router.get("/condutor/user/:id", authMiddleware.verifyToken, condutorController.getCondutorByUserId);
 router.put("/condutor/:id", authMiddleware.verifyToken, condutorController.updateCondutor);
+router.put("/condutor/:id/mudarVeiculoEmUso", authMiddleware.verifyToken, condutorController.mudarVeiculoEmUso);
 
 
 module.exports = router;
