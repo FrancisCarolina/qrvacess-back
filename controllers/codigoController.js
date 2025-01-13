@@ -103,12 +103,12 @@ exports.validarCodigo = async (req, res) => {
     const [historicoEntrada, created] = await Historico.findOrCreate({
       where: {
         veiculo_id: veiculoEmUso.id,
-        entrada_saida: null, // Buscando um histórico sem data_saida (indicando que o veículo ainda está dentro)
+        data_saida: null, // Buscando um histórico sem data_saida (indicando que o veículo ainda está dentro)
       },
       defaults: {
         veiculo_id: veiculoEmUso.id,
         data_entrada: new Date(),
-        entrada_saida: null,
+        data_saida: null,
       },
     });
 
