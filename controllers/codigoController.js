@@ -1,6 +1,7 @@
 const Codigo = require('../models/codigo');
 const Veiculo = require('../models/Veiculo');
 const Condutor = require("../models/Condutor");
+const Historico = require("../models/Historico");
 const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
@@ -71,10 +72,50 @@ exports.validarCodigo = async (req, res) => {
       return res.status(400).send("O campo 'codigo' é obrigatório.");
     }
 
-    const codigoExistente = await Codigo.findOne({ where: { codigo } });
+    // Busca o código na tabela 'Codigos'
+    const codigoExistente = await Codigo.findOne({
+      where: { codigo },
+      include: {
+        model: Condutor,
+        attributes: ["id"],
+      },
+    });
 
     if (!codigoExistente) {
       return res.status(404).json({ valid: 0 });
+    }
+
+    const condutorId = codigoExistente.condutor_id;
+
+    // Busca todos os veículos do condutor
+    const veiculos = await Veiculo.findAll({
+      where: { condutor_id: condutorId },
+    });
+
+    // Encontra o veículo em_uso = true
+    const veiculoEmUso = veiculos.find((veiculo) => veiculo.em_uso);
+
+    if (!veiculoEmUso) {
+      return res.status(404).send("Nenhum veículo em uso encontrado para este condutor.");
+    }
+
+    // Cria uma nova linha na tabela de historico
+    const [historicoEntrada, created] = await Historico.findOrCreate({
+      where: {
+        veiculo_id: veiculoEmUso.id,
+        entrada_saida: null, // Buscando um histórico sem data_saida (indicando que o veículo ainda está dentro)
+      },
+      defaults: {
+        veiculo_id: veiculoEmUso.id,
+        data_entrada: new Date(),
+        entrada_saida: null,
+      },
+    });
+
+    if (!created) {
+      // Caso o histórico já exista (indicando que o veículo já entrou), atualiza a data_saida
+      historicoEntrada.data_saida = new Date();
+      await historicoEntrada.save();
     }
 
     res.status(200).json({ valid: 1 });
