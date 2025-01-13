@@ -1,4 +1,3 @@
-// models/Veiculo.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 const Condutor = require("./Condutor");
@@ -37,6 +36,11 @@ const Veiculo = sequelize.define("Veiculo", {
       model: Condutor,
       key: "id",
     },
+  },
+  em_uso: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
 }, {
   tableName: "veiculos",
