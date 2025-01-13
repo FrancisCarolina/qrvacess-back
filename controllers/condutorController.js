@@ -115,9 +115,9 @@ exports.mudarVeiculoEmUso = async (req, res) => {
 
   try {
     // Atualiza todos os veículos do condutor para em_uso = false
-    await Condutor.update(
+    await Veiculo.update(
       { em_uso: false },
-      { where: { id }, include: { model: Veiculo } }
+      { where: { condutor_id: id}}
     );
 
     // Atualiza o veículo especificado para em_uso = true
