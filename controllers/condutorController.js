@@ -2,7 +2,6 @@ const Condutor = require("../models/Condutor");
 const Usuario = require("../models/Usuario");
 const Local = require("../models/Local");
 const Veiculo = require("../models/Veiculo");
-const { sequelize } = require("../models");
 
 exports.ativarCondutor = async (req, res) => {
   try {
@@ -114,31 +113,32 @@ exports.mudarVeiculoEmUso = async (req, res) => {
     return res.status(400).send("ID do veículo em uso é obrigatório.");
   }
 
-  const t = await sequelize.transaction(); // Inicia a transação
+  // Cria a transação
+  const transaction = await Veiculo.sequelize.transaction();
 
   try {
     // Atualiza todos os veículos do condutor para em_uso = false
     await Veiculo.update(
       { em_uso: false },
-      { where: { condutor_id: id }, transaction: t }  // Usa a transação aqui
+      { where: { condutor_id: id }, transaction }  // Passa a transação aqui
     );
 
     // Atualiza o veículo especificado para em_uso = true
     const [affectedRows] = await Veiculo.update(
       { em_uso: true },
-      { where: { id: veiculo_em_uso, condutor_id: id }, transaction: t }  // Usa a transação aqui
+      { where: { id: veiculo_em_uso, condutor_id: id }, transaction }  // Passa a transação aqui
     );
 
     if (affectedRows === 0) {
-      await t.rollback();  // Faz rollback se não encontrar o veículo
+      await transaction.rollback();  // Faz rollback caso não encontre o veículo
       return res.status(404).send("Veículo não encontrado ou não pertencente ao condutor.");
     }
 
-    await t.commit();  // Confirma as alterações feitas na transação
+    await transaction.commit();  // Confirma as alterações feitas na transação
 
     res.status(200).send("Veículo atualizado com sucesso.");
   } catch (error) {
-    await t.rollback();  // Faz rollback em caso de erro
+    await transaction.rollback();  // Faz rollback em caso de erro
     console.error("Erro ao mudar o veículo em uso:", error);
     res.status(500).send("Erro no servidor.");
   }
