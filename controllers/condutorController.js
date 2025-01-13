@@ -73,3 +73,34 @@ exports.getCondutorByUserId = async (req, res) => {
       res.status(500).json({ message: "Erro no servidor." });
   }
 };
+exports.updateCondutor = async (req, res) => {
+  try {
+    const { id } = req.params; // ID do condutor na URL
+    const { nome, ativo } = req.body; // Campos a serem atualizados no corpo da requisição
+
+    if (!id) {
+      return res.status(400).send("ID do condutor é obrigatório.");
+    }
+
+    const updateData = {};
+    if (nome !== undefined) updateData.nome = nome;
+    if (ativo !== undefined) updateData.ativo = ativo;
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).send("Nenhum dado para atualizar foi fornecido.");
+    }
+
+    const [affectedRows] = await Condutor.update(updateData, {
+      where: { id },
+    });
+
+    if (affectedRows === 0) {
+      return res.status(404).send("Condutor não encontrado.");
+    }
+
+    res.status(200).send("Condutor atualizado com sucesso.");
+  } catch (err) {
+    console.error("Erro ao atualizar condutor:", err);
+    res.status(500).send("Erro no servidor.");
+  }
+};
