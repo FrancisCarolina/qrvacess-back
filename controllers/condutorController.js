@@ -2,6 +2,7 @@ const Condutor = require("../models/Condutor");
 const Usuario = require("../models/Usuario");
 const Local = require("../models/Local");
 const Veiculo = require("../models/Veiculo");
+const { sequelize } = require("../models");
 
 exports.ativarCondutor = async (req, res) => {
   try {
