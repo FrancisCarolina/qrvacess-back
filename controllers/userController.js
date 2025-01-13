@@ -103,7 +103,7 @@ exports.getUsuarioById = async (req, res) => {
         model: Local,
         attributes: ["id", "nome"],
       },
-      attributes: ["id", "login", "role_id"],
+      attributes: ["id", "login", "role_id", "senha"],
     });
 
     if (!user) {
