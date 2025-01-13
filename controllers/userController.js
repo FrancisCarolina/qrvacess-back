@@ -116,3 +116,51 @@ exports.getUsuarioById = async (req, res) => {
     res.status(500).send("Erro no servidor.");
   }
 };
+exports.updateUsuario = async (req, res) => {
+  const { id } = req.params;
+  const { login, senha, nome_local, role_id } = req.body;
+
+  if (!login && !senha && !nome_local && !role_id) {
+    return res.status(400).send("Nenhum campo foi fornecido para atualização.");
+  }
+
+  try {
+    // Verificar se o usuário existe
+    const user = await Usuario.findByPk(id, {
+      include: { model: Local, attributes: ["id", "nome"] },
+    });
+
+    if (!user) {
+      return res.status(404).send("Usuário não encontrado.");
+    }
+
+    // Atualizar ou criar o local, se fornecido
+    let local;
+    if (nome_local) {
+      local = await Local.findOne({ where: { nome: nome_local } });
+      if (!local) {
+        local = await Local.create({ nome: nome_local });
+      }
+    }
+
+    // Atualizar os campos fornecidos
+    const updates = {};
+    if (login) updates.login = login;
+    if (senha) updates.senha = bcrypt.hashSync(senha, 10); // Criptografar a senha se fornecida
+    if (role_id) updates.role_id = role_id;
+    if (local) updates.local_id = local.id;
+
+    // Atualizar o usuário
+    await user.update(updates);
+
+    res.status(200).send("Usuário atualizado com sucesso!");
+  } catch (err) {
+    console.error("Erro ao atualizar usuário:", err);
+
+    if (err.name === "SequelizeUniqueConstraintError") {
+      return res.status(409).send("Este Login já está em uso.");
+    }
+
+    res.status(500).send("Erro ao atualizar o usuário.");
+  }
+};
