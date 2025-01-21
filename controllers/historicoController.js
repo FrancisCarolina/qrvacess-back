@@ -44,9 +44,9 @@ exports.getHistoricoPorLocal = async (req, res) => {
       }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
   
       // Atualiza a estrutura de resposta com apenas os usuários que têm veículos com histórico
-      local.Usuarios = usuariosComHistorico;
+      //local.Usuarios = usuariosComHistorico;
   
-      res.status(200).json(local);
+      res.status(200).json(usuariosComHistorico);
     } catch (error) {
       console.error("Erro ao buscar histórico por local:", error);
       res.status(500).send("Erro no servidor.");
