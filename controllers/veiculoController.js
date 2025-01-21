@@ -92,7 +92,17 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
     });
 
     const veiculos = veiculosPlaca;
-    veiculos.push(veiculosNome);
+    veiculos.map((veiculo => {
+      veiculosNome.map(((veiculoNome,i) =>{
+        if(veiculo === veiculoNome){
+          veiculoNome.splice(i,1);
+          return 0;
+        }
+      }))
+    }))
+    veiculosNome.map(((veiculoNome) =>{
+      veiculos.push(veiculoNome)
+    }))
 
     if (veiculos.length === 0) {
       return res.status(404).send("Nenhum veículo encontrado para os critérios fornecidos.");
