@@ -18,8 +18,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
             include: {
               model: Veiculo,
               include: {
-                model: Historico,
-                where: { data_saida: null }, // Filtra para mostrar apenas registros sem data_saida (indicando que o veículo está dentro)
+                model: Historico, 
                 required: false, // Inclui histórico, mesmo se não houver um registro
               },
             },
