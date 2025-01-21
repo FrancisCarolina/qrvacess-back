@@ -87,11 +87,12 @@ exports.getHistoricoPorLocal = async (req, res) => {
                 // Filtra os veículos que possuem históricos
                 const veiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
         
-                console.log("VEICULOS: ", veiculosComHistorico);
+                
                 
                 // Só mantém o condutor se ele tiver veículos com histórico
                 if (veiculosComHistorico.length > 0) {
                     usuario.Condutor.Veiculos = veiculosComHistorico;
+                    console.log("VEICULOS: ", usuario.Condutor.Veiculos);
                     usuariosComHistorico.push(usuario);
                     return usuario;
                 }
