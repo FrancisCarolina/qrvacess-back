@@ -58,11 +58,6 @@ exports.createVeiculo = async (req, res) => {
           ],
         },
       ],
-      where: {
-        [Op.or]: [
-          { placa: { [Op.like]: `%${busca}%` } }, // Busca parcial na placa
-        ],
-      },
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
     });
 
