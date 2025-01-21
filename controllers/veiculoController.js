@@ -32,7 +32,10 @@ exports.createVeiculo = async (req, res) => {
     console.error("Erro ao criar veículo:", err);
     res.status(500).send("Erro ao criar veículo.");
   }
-};exports.getVeiculoByPlacaOuNome = async (req, res) => {
+};
+const { Op } = require("sequelize");
+
+exports.getVeiculoByPlacaOuNome = async (req, res) => {
   const { local_id } = req.params; // Pegando o local_id da URL
   const { busca } = req.query; // Pegando o parâmetro de busca
 
@@ -45,17 +48,19 @@ exports.createVeiculo = async (req, res) => {
       include: [
         {
           model: Condutor,
+          required: true, // O condutor deve estar associado para ser considerado
           where: {
-            nome: { [Op.like]: `%${busca}%` },
-            // Busca parcial no nome do condutor
+            [Op.or]: [
+              { nome: { [Op.like]: `%${busca}%` } }, // Busca parcial no nome do condutor
+            ],
           },
-          attributes: ['nome'], // Não precisamos de atributos específicos do condutor
-          required: false, // Permite que veículos sem condutor também sejam incluídos
+          attributes: ["nome"], // Retorna o nome do condutor
           include: [
             {
               model: Usuario,
-              where: { local_id }, // Filtra pelo local_id do usuário
-              attributes: [],
+              required: true, // O local deve ser associado para ser considerado
+              where: { local_id },
+              attributes: [], // Não retorna atributos do usuário
             },
           ],
         },
@@ -78,6 +83,7 @@ exports.createVeiculo = async (req, res) => {
     return res.status(500).send("Erro no servidor.");
   }
 };
+
 
 exports.getVeiculosByCondutorId = async (req, res) => {
   const { id } = req.params;  // Pegando o ID do condutor da URL
