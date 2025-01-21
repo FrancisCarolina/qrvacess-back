@@ -32,7 +32,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
       }
   
       // Extrai o histórico dos veículos do condutor do usuário
-      console.log("AQUI: ", local[0].Usuarios[1].Condutor);
+      console.log("AQUI: ", local);
       
       const historicos = local.Usuarios
         .map(usuario => usuario.Condutor.veiculos)
