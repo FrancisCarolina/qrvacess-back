@@ -47,9 +47,9 @@ exports.createVeiculo = async (req, res) => {
           model: Condutor,
           where: {
             nome: { [Op.like]: `%${busca}%` },
-            attributes: ["nome"], // Busca parcial no nome do condutor
+            // Busca parcial no nome do condutor
           },
-          attributes: [], // Não precisamos de atributos específicos do condutor
+          attributes: ['nome'], // Não precisamos de atributos específicos do condutor
           required: false, // Permite que veículos sem condutor também sejam incluídos
           include: [
             {
