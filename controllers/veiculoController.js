@@ -91,18 +91,11 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
     });
 
-    const veiculos = veiculosPlaca;
-    veiculos.map((veiculo => {
-      veiculosNome.map(((veiculoNome,i) =>{
-        if(veiculo === veiculoNome){
-          veiculoNome.splice(i,1);
-          return 0;
-        }
-      }))
-    }))
-    veiculosNome.map(((veiculoNome) =>{
-      veiculos.push(veiculoNome)
-    }))
+    const veiculosCombinados = [...veiculosPlaca, ...veiculosNome];
+    const veiculos = veiculosCombinados.filter(
+      (veiculo, index, self) =>
+        self.findIndex((v) => v.id === veiculo.id) === index
+    );
 
     if (veiculos.length === 0) {
       return res.status(404).send("Nenhum veículo encontrado para os critérios fornecidos.");
