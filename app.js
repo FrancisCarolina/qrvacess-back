@@ -15,6 +15,7 @@ const veiculoRoutes = require("./routes/veiculoRoutes");
 const codigoRoutes = require("./routes/codigoRoutes");
 const localRoutes = require("./routes/localRoutes");
 const qrcodeRoutes = require("./routes/qrcodeRoutes");
+const historicoRoutes = require("./routes/historicoRoutes");
 
 // Middleware para interpretar JSON
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use("/", veiculoRoutes);
 app.use("/", codigoRoutes);
 app.use("/", localRoutes);
 app.use("/", qrcodeRoutes);
+app.use("/", historicoRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
