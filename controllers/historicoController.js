@@ -13,7 +13,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
         where: { id }, // id do local vindo da URL
         include: {
           model: Usuario,
-          attributes: [],
+          attributes: ['id'],
           include: {
             model: Condutor,
             attributes: ['nome', 'cpf', 'ativo'], // Seleciona apenas os atributos do Condutor
