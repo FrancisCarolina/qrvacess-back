@@ -81,24 +81,21 @@ exports.getHistoricoPorLocal = async (req, res) => {
         }
 
         // Filtra os veículos para exibir apenas os que possuem histórico
-        const usuariosComHistorico = [];
-        local.Usuarios.map(usuario => {
+        const usuariosComHistorico = local.Usuarios.map(usuario => {
             if (usuario.Condutor) {
-                // Filtra os veículos que possuem históricos
                 const veiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
-        
-                
-                
-                // Só mantém o condutor se ele tiver veículos com histórico
                 if (veiculosComHistorico.length > 0) {
-                    usuario.Condutor.Veiculos = veiculosComHistorico;
-                    console.log("VEICULOS: ", usuario.Condutor.Veiculos);
-                    usuariosComHistorico.push(usuario);
-                    return usuario;
+                    return {
+                        ...usuario.toJSON(), // Gera um clone puro do objeto Sequelize
+                        Condutor: {
+                            ...usuario.Condutor.toJSON(),
+                            Veiculos: veiculosComHistorico
+                        }
+                    };
                 }
             }
-            return null; // Retorna null se o condutor não tiver veículos com histórico
-        }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
+            return null;
+        }).filter(usuario => usuario !== null);// Remove os usuários sem veículos com histórico
 
         res.status(200).json(usuariosComHistorico);
     } catch (error) {
