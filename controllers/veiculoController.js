@@ -33,7 +33,6 @@ exports.createVeiculo = async (req, res) => {
     res.status(500).send("Erro ao criar veículo.");
   }
 };
-const { Op } = require("sequelize");
 
 exports.getVeiculoByPlacaOuNome = async (req, res) => {
   const { local_id } = req.params; // Pegando o local_id da URL
