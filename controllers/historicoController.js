@@ -30,14 +30,11 @@ exports.getHistoricoPorLocal = async (req, res) => {
       if (!local) {
         return res.status(404).json({ message: "Local não encontrado." });
       }
-  
-      // Extrai o histórico dos veículos do condutor do usuário
-      console.log("AQUI: ", local.Usuarios[1].Condutor);
       
       const historicos = local.Usuarios
-        .map(usuario => usuario.Condutor.veiculos)
+        .map(usuario => usuario.Condutor.Veiculos)
         .flat()
-        .map(veiculo => veiculo.historicos)
+        .map(veiculo => veiculo.Historicos)
         .flat();
   
       if (historicos.length === 0) {
