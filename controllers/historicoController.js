@@ -31,7 +31,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
         return res.status(404).json({ message: "Local não encontrado." });
       }
       
-      const historicos = local.Usuarios
+      /*const historicos = local.Usuarios
         .map(usuario => usuario.Condutor?.Veiculos)
         .flat()
         .map(veiculo =>{ if(veiculo && veiculo.Historicos) veiculo.Historicos})
@@ -39,9 +39,9 @@ exports.getHistoricoPorLocal = async (req, res) => {
   
       if (historicos.length === 0) {
         return res.status(404).json({ message: "Nenhum histórico encontrado para este local." });
-      }
+      }*/
   
-      res.status(200).json(historicos);
+      res.status(200).json(local);
     } catch (error) {
       console.error("Erro ao buscar histórico por local:", error);
       res.status(500).send("Erro no servidor.");
