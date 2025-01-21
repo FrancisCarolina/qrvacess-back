@@ -2,6 +2,7 @@ const Veiculo = require("../models/Veiculo");
 const Condutor = require("../models/Condutor");
 const Usuario = require("../models/Usuario");
 const Historico = require("../models/Historico");
+const Local = require("../models/Local");
 
 exports.getHistoricoPorLocal = async (req, res) => {
     try {
