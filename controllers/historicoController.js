@@ -81,26 +81,23 @@ exports.getHistoricoPorLocal = async (req, res) => {
         }
 
         // Filtra os veículos para exibir apenas os que possuem histórico
-       // Filtra os usuários para exibir apenas os veículos com histórico
-    const usuariosComHistorico = local.Usuarios.map(usuario => {
-        if (usuario.Condutor) {
-            // Filtra os veículos que possuem históricos
-            const veiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos && veiculo.Historicos.length > 0);
-
-            // Substitui os veículos do condutor pelos que possuem histórico, se existirem
-            if (veiculosComHistorico.length > 0) {
-                return {
-                    ...usuario, // Garante que o restante do objeto do usuário seja preservado
-                    Condutor: {
-                        ...usuario.Condutor,
-                        Veiculos: veiculosComHistorico
-                    }
-                };
+        const usuariosComHistorico = [];
+        local.Usuarios.map(usuario => {
+            if (usuario.Condutor) {
+                // Filtra os veículos que possuem históricos
+                const veiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
+        
+                console.log("VEICULOS: ", veiculosComHistorico);
+                
+                // Só mantém o condutor se ele tiver veículos com histórico
+                if (veiculosComHistorico.length > 0) {
+                    usuario.Condutor.Veiculos = veiculosComHistorico;
+                    usuariosComHistorico.push(usuario);
+                    return usuario;
+                }
             }
-        }
-        return null; // Remove o condutor se não houver veículos com histórico
-    }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
-    // Remove os usuários sem veículos com histórico
+            return null; // Retorna null se o condutor não tiver veículos com histórico
+        }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
 
         res.status(200).json(usuariosComHistorico);
     } catch (error) {
