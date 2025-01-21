@@ -82,15 +82,17 @@ exports.getHistoricoPorLocal = async (req, res) => {
 
         // Filtra os veículos para exibir apenas os que possuem histórico
         const usuariosComHistorico = local.Usuarios.map(usuario => {
-        if (usuario.Condutor) {
-            const condutorComVeiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
-            // Só mantém o condutor se ele tiver veículos com histórico
-            if (condutorComVeiculosComHistorico.length > 0) {
-            usuario.Condutor.Veiculos = condutorComVeiculosComHistorico;
-            return usuario;
+            if (usuario.Condutor) {
+                // Filtra os veículos que possuem históricos
+                const veiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
+        
+                // Só mantém o condutor se ele tiver veículos com histórico
+                if (veiculosComHistorico.length > 0) {
+                    usuario.Condutor.Veiculos = veiculosComHistorico;
+                    return usuario;
+                }
             }
-        }
-        return null; // Retorna null se o condutor não tiver veículos com histórico
+            return null; // Retorna null se o condutor não tiver veículos com histórico
         }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
 
         res.status(200).json(usuariosComHistorico);
