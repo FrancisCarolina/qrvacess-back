@@ -134,12 +134,13 @@ exports.updateUsuario = async (req, res) => {
       return res.status(404).send("Usuário não encontrado.");
     }
 
-    // Atualizar ou criar o local, se fornecido
-    let local;
+    // Atualizar o nome do local, se fornecido
     if (nome_local) {
-      local = await Local.findOne({ where: { nome: nome_local } });
-      if (!local) {
-        local = await Local.create({ nome: nome_local });
+      const local = await Local.findByPk(user.local_id); // Buscar o local atual do usuário
+      if (local) {
+        await local.update({ nome: nome_local }); // Atualizar o nome do local
+      } else {
+        return res.status(404).send("Local associado ao usuário não encontrado.");
       }
     }
 
@@ -148,7 +149,6 @@ exports.updateUsuario = async (req, res) => {
     if (login) updates.login = login;
     if (senha) updates.senha = bcrypt.hashSync(senha, 10); // Criptografar a senha se fornecida
     if (role_id) updates.role_id = role_id;
-    if (local) updates.local_id = local.id;
 
     // Atualizar o usuário
     await user.update(updates);
@@ -170,3 +170,4 @@ exports.updateUsuario = async (req, res) => {
     res.status(500).send("Erro ao atualizar o usuário.");
   }
 };
+
