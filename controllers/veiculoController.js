@@ -47,7 +47,7 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
       include: [
         {
           model: Condutor,
-          required: true, // O condutor deve estar associado para ser considerado
+          required: false, // Permite veículos sem condutores associados
           where: {
             [Op.or]: [
               { nome: { [Op.like]: `%${busca}%` } }, // Busca parcial no nome do condutor
@@ -57,7 +57,7 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
           include: [
             {
               model: Usuario,
-              required: true, // O local deve ser associado para ser considerado
+              required: true, // O local deve estar associado
               where: { local_id },
               attributes: [], // Não retorna atributos do usuário
             },
@@ -72,17 +72,21 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
     });
 
-    if (veiculos.length === 0) {
+    // Filtra os veículos que atendem pelo menos um dos critérios
+    const filteredVeiculos = veiculos.filter(
+      (veiculo) => veiculo.Condutors.length > 0 || veiculo.placa.toLowerCase().includes(busca.toLowerCase())
+    );
+
+    if (filteredVeiculos.length === 0) {
       return res.status(404).send("Nenhum veículo encontrado para os critérios fornecidos.");
     }
 
-    res.status(200).json(veiculos);
+    res.status(200).json(filteredVeiculos);
   } catch (err) {
     console.error("Erro ao buscar veículo:", err);
     return res.status(500).send("Erro no servidor.");
   }
 };
-
 
 exports.getVeiculosByCondutorId = async (req, res) => {
   const { id } = req.params;  // Pegando o ID do condutor da URL
