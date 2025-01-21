@@ -34,7 +34,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
       const historicos = local.Usuarios
         .map(usuario => usuario.Condutor?.Veiculos)
         .flat()
-        .map(veiculo =>{ if(veiculo.Historicos) veiculo.Historicos})
+        .map(veiculo =>{ if(veiculo && veiculo.Historicos) veiculo.Historicos})
         .flat();
   
       if (historicos.length === 0) {
