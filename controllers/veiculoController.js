@@ -86,8 +86,7 @@ exports.getVeiculosByCondutorId = async (req, res) => {
     console.error("Erro ao buscar veículos do condutor:", err);
     return res.status(500).send("Erro ao buscar veículos do condutor.");
   }
-};
-exports.getVeiculosByLocal = async (req, res) => {
+};exports.getVeiculosByLocal = async (req, res) => {
   const { local_id } = req.params; // Pegando o local_id da URL
 
   try {
@@ -108,11 +107,14 @@ exports.getVeiculosByLocal = async (req, res) => {
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos do veículo que queremos retornar
     });
 
-    if (veiculos.length === 0) {
-      return res.status(404).send("Nenhum veículo encontrado para este local.");
+    // Filtrar veículos que possuem condutor associado
+    const veiculosComCondutor = veiculos.filter(veiculo => veiculo.Condutor !== null);
+
+    if (veiculosComCondutor.length === 0) {
+      return res.status(404).send("Nenhum veículo com condutor encontrado para este local.");
     }
 
-    res.status(200).json(veiculos);
+    res.status(200).json(veiculosComCondutor);
   } catch (err) {
     console.error("Erro ao buscar veículos por local:", err);
     return res.status(500).send("Erro ao buscar veículos por local.");
