@@ -2,6 +2,7 @@
 const Veiculo = require("../models/Veiculo");
 const Condutor = require("../models/Condutor");
 const Usuario = require("../models/Usuario");
+const { Op } = require("sequelize");
 
 exports.createVeiculo = async (req, res) => {
   const { placa, modelo, marca, cor, ano, condutor_id } = req.body;
@@ -58,6 +59,11 @@ exports.createVeiculo = async (req, res) => {
           ],
         },
       ],
+      where: {
+        [Op.or]: [
+          { placa: { [Op.like]: `%${busca}%` } }, // Busca parcial na placa
+        ],
+      },
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
     });
 
