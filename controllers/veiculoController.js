@@ -31,42 +31,52 @@ exports.createVeiculo = async (req, res) => {
     console.error("Erro ao criar veículo:", err);
     res.status(500).send("Erro ao criar veículo.");
   }
-};
-exports.getVeiculoByPlacaOuNome = async (req, res) => {
-  const { nome, placa } = req.query;
+};exports.getVeiculoByPlacaOuNome = async (req, res) => {
+  const { local_id } = req.params; // Pegando o local_id da URL
+  const { busca } = req.query; // Pegando o parâmetro de busca
+
+  if (!busca) {
+    return res.status(400).send("Por favor, forneça o parâmetro 'busca'.");
+  }
+
   try {
-    let veiculo;
-
-    if (nome) {
-      veiculo = await Veiculo.findOne({
-        include: [
-          {
-            model: Condutor,
-            where: { nome },
-            attributes: [],
+    const veiculos = await Veiculo.findAll({
+      include: [
+        {
+          model: Condutor,
+          where: {
+            nome: { [Op.like]: `%${busca}%` }, // Busca parcial no nome do condutor
           },
+          attributes: [], // Não precisamos de atributos específicos do condutor
+          required: false, // Permite que veículos sem condutor também sejam incluídos
+          include: [
+            {
+              model: Usuario,
+              where: { local_id }, // Filtra pelo local_id do usuário
+              attributes: [],
+            },
+          ],
+        },
+      ],
+      where: {
+        [Op.or]: [
+          { placa: { [Op.like]: `%${busca}%` } }, // Busca parcial na placa
         ],
-        attributes: ["id", "placa", "modelo", "condutor_id"],
-      });
-    } else if (placa) {
-      veiculo = await Veiculo.findOne({
-        where: { placa },
-        attributes: ["id", "placa", "modelo", "condutor_id"],
-      });
-    } else {
-      return res.status(400).send("Por favor, forneça 'nome' ou 'placa' como parâmetro.");
+      },
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
+    });
+
+    if (veiculos.length === 0) {
+      return res.status(404).send("Nenhum veículo encontrado para os critérios fornecidos.");
     }
 
-    if (!veiculo) {
-      return res.status(404).send("Veículo não encontrado.");
-    }
-
-    res.status(200).json(veiculo);
+    res.status(200).json(veiculos);
   } catch (err) {
     console.error("Erro ao buscar veículo:", err);
     return res.status(500).send("Erro no servidor.");
   }
 };
+
 exports.getVeiculosByCondutorId = async (req, res) => {
   const { id } = req.params;  // Pegando o ID do condutor da URL
 
