@@ -29,16 +29,22 @@ exports.getHistoricoPorLocal = async (req, res) => {
       if (!local) {
         return res.status(404).json({ message: "Local não encontrado." });
       }
-      
-      /*const historicos = local.Usuarios
-        .map(usuario => usuario.Condutor?.Veiculos)
-        .flat()
-        .map(veiculo =>{ if(veiculo && veiculo.Historicos) veiculo.Historicos})
-        .flat();
   
-      if (historicos.length === 0) {
-        return res.status(404).json({ message: "Nenhum histórico encontrado para este local." });
-      }*/
+      // Filtra os veículos para exibir apenas os que possuem histórico
+      const usuariosComHistorico = local.Usuarios.map(usuario => {
+        if (usuario.Condutor) {
+          const condutorComVeiculosComHistorico = usuario.Condutor.Veiculos.filter(veiculo => veiculo.Historicos.length > 0);
+          // Só mantém o condutor se ele tiver veículos com histórico
+          if (condutorComVeiculosComHistorico.length > 0) {
+            usuario.Condutor.Veiculos = condutorComVeiculosComHistorico;
+            return usuario;
+          }
+        }
+        return null; // Retorna null se o condutor não tiver veículos com histórico
+      }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
+  
+      // Atualiza a estrutura de resposta com apenas os usuários que têm veículos com histórico
+      local.Usuarios = usuariosComHistorico;
   
       res.status(200).json(local);
     } catch (error) {
@@ -46,4 +52,3 @@ exports.getHistoricoPorLocal = async (req, res) => {
       res.status(500).send("Erro no servidor.");
     }
   };
-  
