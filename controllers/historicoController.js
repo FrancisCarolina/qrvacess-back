@@ -15,17 +15,19 @@ exports.getHistoricoPorLocal = async (req, res) => {
           model: Usuario,
           include: {
             model: Condutor,
+            attributes: ['nome', 'cpf', 'ativo'], // Seleciona apenas os atributos do Condutor
             include: {
               model: Veiculo,
+              attributes: ['placa', 'modelo', 'marca'], // Seleciona apenas os atributos do Veículo
               include: {
                 model: Historico, 
+                attributes: ['data_entrada', 'data_saida'], // Seleciona apenas os atributos de Histórico
                 required: false, // Inclui histórico, mesmo se não houver um registro
               },
             },
           },
         },
       });
-  
       if (!local) {
         return res.status(404).json({ message: "Local não encontrado." });
       }
@@ -42,9 +44,6 @@ exports.getHistoricoPorLocal = async (req, res) => {
         }
         return null; // Retorna null se o condutor não tiver veículos com histórico
       }).filter(usuario => usuario !== null); // Remove os usuários sem veículos com histórico
-  
-      // Atualiza a estrutura de resposta com apenas os usuários que têm veículos com histórico
-      //local.Usuarios = usuariosComHistorico;
   
       res.status(200).json(usuariosComHistorico);
     } catch (error) {
