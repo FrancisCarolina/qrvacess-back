@@ -43,11 +43,11 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
   }
 
   try {
-    const veiculos = await Veiculo.findAll({
+    const veiculosNome = await Veiculo.findAll({
       include: [
         {
           model: Condutor,
-          required: false, // Permite veículos sem condutores associados
+          required: true, // O condutor deve estar associado para ser considerado
           where: {
             [Op.or]: [
               { nome: { [Op.like]: `%${busca}%` } }, // Busca parcial no nome do condutor
@@ -57,7 +57,26 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
           include: [
             {
               model: Usuario,
-              required: true, // O local deve estar associado
+              required: true, // O local deve ser associado para ser considerado
+              where: { local_id },
+              attributes: [], // Não retorna atributos do usuário
+            },
+          ],
+        },
+      ],
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
+    });
+
+    const veiculosPlaca = await Veiculo.findAll({
+      include: [
+        {
+          model: Condutor,
+          required: true, // O condutor deve estar associado para ser considerado
+          attributes: ["nome"], // Retorna o nome do condutor
+          include: [
+            {
+              model: Usuario,
+              required: true, // O local deve ser associado para ser considerado
               where: { local_id },
               attributes: [], // Não retorna atributos do usuário
             },
@@ -72,21 +91,20 @@ exports.getVeiculoByPlacaOuNome = async (req, res) => {
       attributes: ["id", "placa", "modelo", "marca", "cor", "ano"], // Atributos desejados do veículo
     });
 
-    // Filtra os veículos que atendem pelo menos um dos critérios
-    const filteredVeiculos = veiculos.filter(
-      (veiculo) => veiculo.Condutors.length > 0 || veiculo.placa.toLowerCase().includes(busca.toLowerCase())
-    );
+    const veiculos = veiculosPlaca;
+    veiculos.push(veiculosNome);
 
-    if (filteredVeiculos.length === 0) {
+    if (veiculos.length === 0) {
       return res.status(404).send("Nenhum veículo encontrado para os critérios fornecidos.");
     }
 
-    res.status(200).json(filteredVeiculos);
+    res.status(200).json(veiculos);
   } catch (err) {
     console.error("Erro ao buscar veículo:", err);
     return res.status(500).send("Erro no servidor.");
   }
 };
+
 
 exports.getVeiculosByCondutorId = async (req, res) => {
   const { id } = req.params;  // Pegando o ID do condutor da URL
