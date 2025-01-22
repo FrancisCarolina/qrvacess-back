@@ -116,7 +116,7 @@ exports.getVeiculosByCondutorId = async (req, res) => {
     // Buscando todos os veículos que pertencem ao condutor com o ID fornecido
     const veiculos = await Veiculo.findAll({
       where: { condutor_id: id },  // Condição para buscar veículos com o condutor_id correspondente
-      attributes: ["id", "placa", "modelo", "marca", "cor", "ano"],  // Atributos que queremos retornar
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano", "em_uso"],  // Atributos que queremos retornar
     });
 
     if (veiculos.length === 0) {
