@@ -36,10 +36,12 @@ exports.getCondutoresByLocalId = async (req, res) => {
         {
           model: Usuario,
           attributes: ["id", "login"],
+          required: true, // Garante que apenas os condutores relacionados sejam incluídos
           include: {
             model: Local,
             attributes: ["id", "nome"],
             where: { id },
+            required: true, // Garante que o Local também satisfaça a condição
           },
         },
       ],
@@ -56,6 +58,7 @@ exports.getCondutoresByLocalId = async (req, res) => {
     res.status(500).send("Erro no servidor.");
   }
 };
+
 
 exports.getCondutorByUserId = async (req, res) => {
   const { id } = req.params; // O ID aqui é o usuario_id
