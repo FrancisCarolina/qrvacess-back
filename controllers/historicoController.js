@@ -18,15 +18,32 @@ exports.getHistoricoPorLocal = async (req, res) => {
         }
         if (type === 'daily') {
           if (!date) {
-            return res.status(400).json({ message: "A data é obrigatória para o filtro diário." });
+              return res.status(400).json({ message: "A data é obrigatória para o filtro diário." });
           }
+          const startOfDay = new Date(date);
+          const endOfDay = new Date(startOfDay);
+          endOfDay.setDate(startOfDay.getDate() + 1); // Próximo dia
+      
           whereClause = {
-            data_entrada: {
-              [Op.gte]: new Date(date),
-              [Op.lt]: new Date(new Date(date).setDate(new Date(date).getDate() + 1)), // Próximo dia
-            },
+              [Op.or]: [
+                  {
+                      data_entrada: {
+                          [Op.gte]: startOfDay,
+                          [Op.lt]: endOfDay,
+                      },
+                  },
+                  {
+                      data_saida: {
+                          [Op.gte]: startOfDay,
+                          [Op.lt]: endOfDay,
+                      },
+                  },
+                  {
+                      data_saida: null,
+                  },
+              ],
           };
-        } else if (type === 'weekly') {
+      } else if (type === 'weekly') {
           const startOfWeek = new Date(date); // Data selecionada como início da semana
           const endOfWeek = new Date(startOfWeek);
           endOfWeek.setDate(startOfWeek.getDate() + 6); // Fim da semana
