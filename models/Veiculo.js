@@ -45,6 +45,8 @@ const Veiculo = sequelize.define("Veiculo", {
 }, {
   tableName: "veiculos",
   timestamps: true,
+  paranoid: true, // Habilita o soft delete
+  deletedAt: "deletedAt", // Coluna para marcar exclusões
 });
 
 Veiculo.belongsTo(Condutor, { foreignKey: "condutor_id" });

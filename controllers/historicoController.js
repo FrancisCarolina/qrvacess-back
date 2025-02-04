@@ -82,6 +82,7 @@ exports.getHistoricoPorLocal = async (req, res) => {
               include: {
                 model: Veiculo,
                 attributes: ['placa', 'modelo', 'marca'],
+                paranoid: false,
                 include: {
                   model: Historico,
                   attributes: ['data_entrada', 'data_saida'],
