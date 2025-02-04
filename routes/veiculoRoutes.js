@@ -9,5 +9,6 @@ router.get('/veiculo/condutor/:id', authMiddleware.verifyToken, veiculoControlle
 router.get('/veiculo/local/:local_id',authMiddleware.verifyToken, veiculoController.getVeiculosByLocal)
 router.put("/veiculos/:id",authMiddleware.verifyToken, veiculoController.updateVeiculo);
 router.get("/veiculos/:id",authMiddleware.verifyToken, veiculoController.getVeiculosById);
+router.delete("/:id",authMiddleware.verifyToken, veiculoController.deleteVeiculo);
 
 module.exports = router;

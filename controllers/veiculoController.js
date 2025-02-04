@@ -232,3 +232,25 @@ exports.getVeiculosById = async (req, res) => {
     return res.status(500).send("Erro ao buscar veículo pelo ID.");
   }
 };
+exports.deleteVeiculo = async (req, res) => {
+  const { id } = req.params; // Pegando o ID do veículo da URL
+
+  try {
+    // Buscando o veículo pelo ID
+    const veiculo = await Veiculo.findByPk(id);
+
+    if (!veiculo) {
+      return res.status(404).send("Veículo não encontrado.");
+    }
+
+    // Realizando o soft delete
+    await veiculo.destroy();
+
+    res.status(200).json({
+      message: "Veículo excluído com sucesso.",
+    });
+  } catch (err) {
+    console.error("Erro ao excluir veículo:", err);
+    return res.status(500).send("Erro ao excluir veículo.");
+  }
+};
