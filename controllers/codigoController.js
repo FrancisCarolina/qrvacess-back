@@ -63,8 +63,6 @@ exports.gerarCodigo = async (req, res) => {
   }
 };
 
-const { Op } = require("sequelize");
-
 exports.validarCodigo = async (req, res) => {
   try {
     const { codigo } = req.body;
