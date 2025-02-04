@@ -201,3 +201,34 @@ exports.updateVeiculo = async (req, res) => {
     return res.status(500).send("Erro ao atualizar veículo.");
   }
 };
+exports.getVeiculosById = async (req, res) => {
+  const { id } = req.params; // Pegando o ID do veículo da URL
+
+  try {
+    // Buscando o veículo pelo ID
+    const veiculo = await Veiculo.findByPk(id, {
+      include: [
+        {
+          model: Condutor,
+          attributes: ["nome", "email", "telefone"], // Inclui atributos desejados do condutor
+          include: [
+            {
+              model: Usuario,
+              attributes: ["login", "local_id"], // Inclui atributos desejados do usuário
+            },
+          ],
+        },
+      ],
+      attributes: ["id", "placa", "modelo", "marca", "cor", "ano", "em_uso"], // Atributos do veículo que queremos retornar
+    });
+
+    if (!veiculo) {
+      return res.status(404).send("Veículo não encontrado.");
+    }
+
+    res.status(200).json(veiculo);
+  } catch (err) {
+    console.error("Erro ao buscar veículo pelo ID:", err);
+    return res.status(500).send("Erro ao buscar veículo pelo ID.");
+  }
+};

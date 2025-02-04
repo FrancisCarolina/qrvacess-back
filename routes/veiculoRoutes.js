@@ -8,5 +8,6 @@ router.get('/busca/veiculo/local/:local_id', authMiddleware.verifyToken, veiculo
 router.get('/veiculo/condutor/:id', authMiddleware.verifyToken, veiculoController.getVeiculosByCondutorId);
 router.get('/veiculo/local/:local_id',authMiddleware.verifyToken, veiculoController.getVeiculosByLocal)
 router.put("/veiculos/:id",authMiddleware.verifyToken, veiculoController.updateVeiculo);
+router.get("/veiculos/:id",authMiddleware.verifyToken, veiculoController.getVeiculosById);
 
 module.exports = router;
