@@ -7,5 +7,6 @@ router.post('/veiculo', authMiddleware.verifyToken, veiculoController.createVeic
 router.get('/busca/veiculo/local/:local_id', authMiddleware.verifyToken, veiculoController.getVeiculoByPlacaOuNome);
 router.get('/veiculo/condutor/:id', authMiddleware.verifyToken, veiculoController.getVeiculosByCondutorId);
 router.get('/veiculo/local/:local_id',authMiddleware.verifyToken, veiculoController.getVeiculosByLocal)
+router.put("/veiculos/:id",authMiddleware.verifyToken, veiculoController.updateVeiculo);
 
 module.exports = router;

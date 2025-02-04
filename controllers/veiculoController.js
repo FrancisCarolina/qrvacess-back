@@ -162,3 +162,42 @@ exports.getVeiculosByCondutorId = async (req, res) => {
     return res.status(500).send("Erro ao buscar veículos por local.");
   }
 };
+exports.updateVeiculo = async (req, res) => {
+  const { id } = req.params; // Pegando o ID do veículo da URL
+  const { placa, modelo, marca, cor, ano, condutor_id } = req.body; // Dados enviados no corpo da requisição
+
+  try {
+    // Buscando o veículo pelo ID
+    const veiculo = await Veiculo.findByPk(id);
+
+    if (!veiculo) {
+      return res.status(404).send("Veículo não encontrado.");
+    }
+
+    // Validando o condutor_id se fornecido
+    if (condutor_id) {
+      const condutor = await Condutor.findByPk(condutor_id);
+      if (!condutor) {
+        return res.status(404).send("Condutor não encontrado.");
+      }
+    }
+
+    // Atualizando os dados do veículo
+    await veiculo.update({
+      placa: placa || veiculo.placa,
+      modelo: modelo || veiculo.modelo,
+      marca: marca || veiculo.marca,
+      cor: cor || veiculo.cor,
+      ano: ano || veiculo.ano,
+      condutor_id: condutor_id || veiculo.condutor_id,
+    });
+
+    res.status(200).json({
+      message: "Veículo atualizado com sucesso.",
+      veiculo,
+    });
+  } catch (err) {
+    console.error("Erro ao atualizar veículo:", err);
+    return res.status(500).send("Erro ao atualizar veículo.");
+  }
+};
