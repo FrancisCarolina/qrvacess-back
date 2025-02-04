@@ -63,6 +63,7 @@ exports.gerarCodigo = async (req, res) => {
   }
 };
 
+const { Op } = require("sequelize");
 
 exports.validarCodigo = async (req, res) => {
   try {
@@ -74,7 +75,13 @@ exports.validarCodigo = async (req, res) => {
 
     // Busca o código na tabela 'Codigos'
     const codigoExistente = await Codigo.findOne({
-      where: { codigo },
+      where: {
+        codigo,
+        createdAt: {
+          [Op.gte]: new Date().setHours(0, 0, 0, 0), // Data de hoje à meia-noite
+          [Op.lt]: new Date().setHours(23, 59, 59, 999), // Último milissegundo do dia
+        },
+      },
       include: {
         model: Condutor,
         attributes: ["id"],
