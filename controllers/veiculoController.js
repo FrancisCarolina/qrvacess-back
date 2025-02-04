@@ -210,7 +210,7 @@ exports.getVeiculosById = async (req, res) => {
       include: [
         {
           model: Condutor,
-          attributes: ["nome", "email", "telefone"], // Inclui atributos desejados do condutor
+          attributes: ["nome", "id"], // Inclui atributos desejados do condutor
           include: [
             {
               model: Usuario,
